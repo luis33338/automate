@@ -68,3 +68,10 @@ message UpdateNodeTags {
     // Node tags.
     repeated string tags = 5;
 }
+
+message UpdateNodeAttributes {
+    // Node name.
+    string name = 1;
+    // Node attributes JSON.
+    string attributes = 2;
+}

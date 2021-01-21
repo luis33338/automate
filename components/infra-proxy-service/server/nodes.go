@@ -222,6 +222,51 @@ func (s *Server) UpdateNodeTags(ctx context.Context, req *request.UpdateNodeTags
 	}, nil
 }
 
+// UpdateNodeAttributes update the node attributes
+func (s *Server) UpdateNodeAttributes(ctx context.Context, req *request.UpdateNodeAttributes) (*response.UpdateNodeAttributes, error) {
+	err := validation.New(validation.Options{
+		Target:  "node",
+		Request: *req,
+		Rules: validation.Rules{
+			"OrgId":    []string{"required"},
+			"ServerId": []string{"required"},
+			"Name":     []string{"required"},
+		},
+	}).Validate()
+
+	if err != nil {
+		return nil, err
+	}
+
+	c, err := s.createClient(ctx, req.OrgId, req.ServerId)
+	if err != nil {
+		return nil, err
+	}
+
+	attributes, err := StructToJSON(req.Attributes)
+	if err != nil {
+		return nil, err
+	}
+
+	chefNode, err := c.client.Nodes.Get(req.Name)
+	chefNode.NormalAttributes = attributes.(map[string]interface{})
+
+	res, err := c.client.Nodes.Put(chefNode)
+	if err != nil {
+		return nil, ParseAPIError(err)
+	}
+
+	resAttributes, err := json.Marshal(res.NormalAttributes)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &response.UpdateNodeAttributes{
+		Name:       req.Name,
+		Attributes: string(resAttributes),
+	}, nil
+}
+
 // fetchAffectedNodes get the nodes used by chef object
 // URL is being constructed based on the chefType, name, and version
 // chefType: should be one of the cookbooks, roles and chef_environment value
