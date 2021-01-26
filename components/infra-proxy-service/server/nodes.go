@@ -249,6 +249,10 @@ func (s *Server) UpdateNodeAttributes(ctx context.Context, req *request.UpdateNo
 	}
 
 	chefNode, err := c.client.Nodes.Get(req.Name)
+	if err != nil {
+		return nil, ParseAPIError(err)
+	}
+
 	chefNode.NormalAttributes = attributes.(map[string]interface{})
 
 	res, err := c.client.Nodes.Put(chefNode)
@@ -262,7 +266,7 @@ func (s *Server) UpdateNodeAttributes(ctx context.Context, req *request.UpdateNo
 	}
 
 	return &response.UpdateNodeAttributes{
-		Name:       req.Name,
+		Name:       res.Name,
 		Attributes: string(resAttributes),
 	}, nil
 }
