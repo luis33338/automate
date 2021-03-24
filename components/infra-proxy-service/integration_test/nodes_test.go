@@ -13,7 +13,6 @@ import (
 )
 
 func TestGetNodes(t *testing.T) {
-	ctx := context.Background()
 	req := &request.Nodes{
 		ServerId: autoDeployedChefServerID,
 		OrgId:    autoDeployedChefOrganizationID,
