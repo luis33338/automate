@@ -136,9 +136,10 @@ func (a *InfraProxyServer) UpdateNodeTags(ctx context.Context, r *gwreq.UpdateNo
 // UpdateNodeAttributes updates the node attributes
 func (a *InfraProxyServer) UpdateNodeAttributes(ctx context.Context, r *gwreq.UpdateNodeAttributes) (*gwres.UpdateNodeAttributes, error) {
 	req := &infra_req.UpdateNodeAttributes{
-		OrgId:    r.OrgId,
-		ServerId: r.ServerId,
-		Name:     r.Name,
+		OrgId:      r.OrgId,
+		ServerId:   r.ServerId,
+		Name:       r.Name,
+		Attributes: r.Attributes,
 	}
 	res, err := a.client.UpdateNodeAttributes(ctx, req)
 	if err != nil {
